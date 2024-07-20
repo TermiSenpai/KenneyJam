@@ -9,7 +9,7 @@ public class IslandGeneratorWindow : EditorWindow
 
     private bool showGeneralSettings = true;
     private bool showNoiseSettings = true;
-    private bool showTerrainSettings = true;
+    private bool showLayerSettings = true;
 
     [MenuItem("Tools/Island Generator")]
     public static void ShowWindow()
@@ -26,30 +26,78 @@ public class IslandGeneratorWindow : EditorWindow
     {
         GUILayout.Label("Island Generator", EditorStyles.boldLabel);
 
+        // General Settings
         showGeneralSettings = EditorGUILayout.Foldout(showGeneralSettings, "General Settings");
         if (showGeneralSettings)
         {
-            settings.terrain = (Terrain)EditorGUILayout.ObjectField("Terrain", settings.terrain, typeof(Terrain), true);
-            settings.scale = EditorGUILayout.FloatField("Scale", settings.scale);
-            settings.islandRadius = EditorGUILayout.FloatField("Island Radius", settings.islandRadius);
-            settings.heightMultiplier = EditorGUILayout.FloatField("Height Multiplier", settings.heightMultiplier);
+            settings.terrain = (Terrain)EditorGUILayout.ObjectField(
+                new GUIContent("Terrain", "Assign the Terrain object where the island will be generated."),
+                settings.terrain,
+                typeof(Terrain),
+                true
+            );
+
+            settings.scale = EditorGUILayout.FloatField(
+                new GUIContent("Scale", "Scale of the noise function affecting the terrain."),
+                settings.scale
+            );
+
+            settings.islandRadius = EditorGUILayout.FloatField(
+                new GUIContent("Island Radius", "Radius of the island. Affects the size of the island."),
+                settings.islandRadius
+            );
         }
 
+        // Noise Settings
         showNoiseSettings = EditorGUILayout.Foldout(showNoiseSettings, "Noise Settings");
         if (showNoiseSettings)
         {
-            settings.mountainFactor = EditorGUILayout.FloatField("Mountain Factor", settings.mountainFactor);
-            settings.erosionAmount = EditorGUILayout.FloatField("Erosion Amount", settings.erosionAmount);
-            settings.minNoiseOffset = EditorGUILayout.FloatField("Min Noise Offset", settings.minNoiseOffset);
-            settings.maxNoiseOffset = EditorGUILayout.FloatField("Max Noise Offset", settings.maxNoiseOffset);
-            settings.noiseType = (NoiseType)EditorGUILayout.EnumPopup("Noise Type", settings.noiseType);
+            settings.heightMultiplier = EditorGUILayout.FloatField(
+                new GUIContent("Height Multiplier", "Multiplies the height of the terrain."),
+                settings.heightMultiplier
+            );
+
+            settings.mountainFactor = EditorGUILayout.FloatField(
+                new GUIContent("Mountain Factor", "Controls the steepness of the mountains on the terrain."),
+                settings.mountainFactor
+            );
+
+            settings.erosionAmount = EditorGUILayout.FloatField(
+                new GUIContent("Erosion Amount", "Amount of erosion applied to the terrain."),
+                settings.erosionAmount
+            );
+
+            settings.minNoiseOffset = EditorGUILayout.FloatField(
+                new GUIContent("Min Noise Offset", "Minimum offset for the noise function."),
+                settings.minNoiseOffset
+            );
+
+            settings.maxNoiseOffset = EditorGUILayout.FloatField(
+                new GUIContent("Max Noise Offset", "Maximum offset for the noise function."),
+                settings.maxNoiseOffset
+            );
+
+            settings.noiseType = (NoiseType)EditorGUILayout.EnumPopup(
+                new GUIContent("Noise Type", "Type of noise function used for generating terrain."),
+                settings.noiseType
+            );
         }
 
-        showTerrainSettings = EditorGUILayout.Foldout(showTerrainSettings, "Terrain Settings");
-        if (showTerrainSettings)
+        // Layer Settings
+        showLayerSettings = EditorGUILayout.Foldout(showLayerSettings, "Layer Settings");
+        if (showLayerSettings)
         {
-            settings.baseLayer = (TerrainLayer)EditorGUILayout.ObjectField("Base Layer", settings.baseLayer, typeof(TerrainLayer), true);
-            settings.terrainType = (TerrainType)EditorGUILayout.EnumPopup("Terrain Type", settings.terrainType);
+            settings.baseLayer = (TerrainLayer)EditorGUILayout.ObjectField(
+                new GUIContent("Base Layer", "TerrainLayer to be applied to the base of the terrain."),
+                settings.baseLayer,
+                typeof(TerrainLayer),
+                true
+            );
+
+            settings.terrainType = (TerrainType)EditorGUILayout.EnumPopup(
+                new GUIContent("Terrain Type", "Type of terrain to be generated."),
+                settings.terrainType
+            );
         }
 
         if (GUILayout.Button("Generate Terrain"))
@@ -211,17 +259,22 @@ public static class SimplexNoise
         74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111,
         229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40,
         244, 102, 143, 54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132,
-        187, 208, 89, 18, 169, 200, 196, 135, 130, 116, 188, 159, 86,
-        164, 100, 109, 198, 173, 186, 3, 64, 52, 217, 226, 250, 124, 123,
-        5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206, 59, 227,
-        47, 16, 58, 17, 182, 189, 28, 42, 223, 183, 170, 213, 119, 248,
-        152, 2, 44, 154, 163, 70, 221, 153, 101, 155, 167, 43, 172, 9,
-        129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178, 185,
-        112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238, 210, 144,
-        12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239, 107, 49,
-        192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121,
-        50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29,
-        24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
+        187, 208, 89, 18, 169, 200, 196, 135, 130, 116, 88, 70, 98, 107,
+        15, 4, 32, 54, 64, 140, 120, 130, 12, 3, 220, 240, 105, 172, 202,
+        233, 1, 234, 232, 237, 12, 98, 19, 15, 75, 200, 33, 61, 95, 129,
+        207, 162, 161, 187, 193, 231, 154, 119, 162, 173, 115, 132, 143,
+        166, 183, 215, 142, 90, 202, 206, 198, 124, 179, 163, 207, 189,
+        228, 225, 248, 129, 165, 210, 73, 142, 66, 99, 118, 84, 72, 204,
+        163, 92, 233, 10, 193, 118, 118, 129, 144, 50, 124, 55, 231, 147,
+        152, 127, 5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206,
+        59, 227, 47, 16, 58, 17, 182, 189, 28, 42, 223, 183, 170, 213,
+        119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155, 167, 43,
+        172, 9, 129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232,
+        178, 185, 112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238,
+        210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239,
+        107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176,
+        115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114,
+        67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
     };
 
     static SimplexNoise()
