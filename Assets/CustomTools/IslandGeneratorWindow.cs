@@ -7,6 +7,10 @@ public class IslandGeneratorWindow : EditorWindow
     private IslandGeneratorSettings settings = new IslandGeneratorSettings();
     private IslandGenerator islandGenerator;
 
+    private bool showGeneralSettings = true;
+    private bool showNoiseSettings = true;
+    private bool showTerrainSettings = true;
+
     [MenuItem("Tools/Island Generator")]
     public static void ShowWindow()
     {
@@ -22,18 +26,31 @@ public class IslandGeneratorWindow : EditorWindow
     {
         GUILayout.Label("Island Generator", EditorStyles.boldLabel);
 
-        settings.terrain = (Terrain)EditorGUILayout.ObjectField("Terrain", settings.terrain, typeof(Terrain), true);
-        settings.scale = EditorGUILayout.FloatField("Scale", settings.scale);
-        settings.islandRadius = EditorGUILayout.FloatField("Island Radius", settings.islandRadius);
-        settings.heightMultiplier = EditorGUILayout.FloatField("Height Multiplier", settings.heightMultiplier);
-        settings.mountainFactor = EditorGUILayout.FloatField("Mountain Factor", settings.mountainFactor);
-        settings.erosionAmount = EditorGUILayout.FloatField("Erosion Amount", settings.erosionAmount);
-        settings.minNoiseOffset = EditorGUILayout.FloatField("Min Noise Offset", settings.minNoiseOffset);
-        settings.maxNoiseOffset = EditorGUILayout.FloatField("Max Noise Offset", settings.maxNoiseOffset);
-        settings.baseLayer = (TerrainLayer)EditorGUILayout.ObjectField("Base Layer", settings.baseLayer, typeof(TerrainLayer), true);
+        showGeneralSettings = EditorGUILayout.Foldout(showGeneralSettings, "General Settings");
+        if (showGeneralSettings)
+        {
+            settings.terrain = (Terrain)EditorGUILayout.ObjectField("Terrain", settings.terrain, typeof(Terrain), true);
+            settings.scale = EditorGUILayout.FloatField("Scale", settings.scale);
+            settings.islandRadius = EditorGUILayout.FloatField("Island Radius", settings.islandRadius);
+            settings.heightMultiplier = EditorGUILayout.FloatField("Height Multiplier", settings.heightMultiplier);
+        }
 
-        settings.noiseType = (NoiseType)EditorGUILayout.EnumPopup("Noise Type", settings.noiseType);
-        settings.terrainType = (TerrainType)EditorGUILayout.EnumPopup("Terrain Type", settings.terrainType);
+        showNoiseSettings = EditorGUILayout.Foldout(showNoiseSettings, "Noise Settings");
+        if (showNoiseSettings)
+        {
+            settings.mountainFactor = EditorGUILayout.FloatField("Mountain Factor", settings.mountainFactor);
+            settings.erosionAmount = EditorGUILayout.FloatField("Erosion Amount", settings.erosionAmount);
+            settings.minNoiseOffset = EditorGUILayout.FloatField("Min Noise Offset", settings.minNoiseOffset);
+            settings.maxNoiseOffset = EditorGUILayout.FloatField("Max Noise Offset", settings.maxNoiseOffset);
+            settings.noiseType = (NoiseType)EditorGUILayout.EnumPopup("Noise Type", settings.noiseType);
+        }
+
+        showTerrainSettings = EditorGUILayout.Foldout(showTerrainSettings, "Terrain Settings");
+        if (showTerrainSettings)
+        {
+            settings.baseLayer = (TerrainLayer)EditorGUILayout.ObjectField("Base Layer", settings.baseLayer, typeof(TerrainLayer), true);
+            settings.terrainType = (TerrainType)EditorGUILayout.EnumPopup("Terrain Type", settings.terrainType);
+        }
 
         if (GUILayout.Button("Generate Terrain"))
         {
