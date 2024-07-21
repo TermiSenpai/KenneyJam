@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ScriptCreatorWindow : EditorWindow
 {
+    // Define fields for script name, path, and collections of variables and methods
     private string scriptName = "NewScript";
     private string scriptPath = "Assets/";
     private List<IVariable> variables = new List<IVariable>();
@@ -14,25 +15,35 @@ public class ScriptCreatorWindow : EditorWindow
     private Vector2 scrollPosition;
     private int selectedUnityMethodIndex = 0;
 
+    // Define script generator
     private IScriptGenerator scriptGenerator = new ScriptGenerator();
 
+    // Define arrays for dropdown options
     private readonly string[] accessModifiers = new string[] { "public", "private", "protected" };
     private readonly string[] variableTypes = new string[] { "int", "float", "string", "bool", "Vector3", "GameObject", "Transform" };
     private readonly string[] returnTypes = new string[] { "void", "int", "float", "string", "bool", "Vector3", "GameObject", "Transform" };
-    private readonly string[] unityMethodNames = new string[] { "Start", "Update", "Awake", "OnDestroy" };
+    private readonly string[] unityMethodNames = new string[]
+    {
+        "Awake", "Start", "Update", "LateUpdate", "FixedUpdate", "OnDestroy", "OnEnable", "OnDisable"
+    };
 
+    #region Menu
     [MenuItem("Tools/Script Creator")]
     public static void ShowWindow()
     {
         GetWindow<ScriptCreatorWindow>("Script Creator");
     }
+    #endregion
 
+    #region Initialization
     private void OnEnable()
     {
         methodParameterFoldouts = new bool[methods.Count];
         InitializeUnityMethods();
     }
+    #endregion
 
+    #region GUI Rendering
     private void OnGUI()
     {
         GUILayout.Label("Create New Script", EditorStyles.boldLabel);
@@ -69,7 +80,9 @@ public class ScriptCreatorWindow : EditorWindow
             CreateScript(scriptName, scriptPath, variables, methods, unityMethods);
         }
     }
+    #endregion
 
+    #region Variables Section
     private void DrawVariablesSection()
     {
         GUILayout.Label("Variables", EditorStyles.boldLabel);
@@ -129,7 +142,9 @@ public class ScriptCreatorWindow : EditorWindow
             nextVariableIndex++;
         }
     }
+    #endregion
 
+    #region Methods Section
     private void DrawMethodsSection()
     {
         GUILayout.Label("Methods", EditorStyles.boldLabel);
@@ -243,7 +258,9 @@ public class ScriptCreatorWindow : EditorWindow
             System.Array.Resize(ref methodParameterFoldouts, methods.Count);
         }
     }
+    #endregion
 
+    #region Unity Methods Section
     private void DrawUnityMethodsSection()
     {
         GUILayout.Label("Unity Methods", EditorStyles.boldLabel);
@@ -304,16 +321,19 @@ public class ScriptCreatorWindow : EditorWindow
             }
         }
     }
+    #endregion
 
+    #region Initialization Helper
     private void InitializeUnityMethods()
     {
         // Prepopulate with common Unity methods
         unityMethods.Add(new Method { Name = "Start", ReturnType = "void", AccessModifier = "public" });
         unityMethods.Add(new Method { Name = "Update", ReturnType = "void", AccessModifier = "public" });
         unityMethods.Add(new Method { Name = "Awake", ReturnType = "void", AccessModifier = "public" });
-        unityMethods.Add(new Method { Name = "OnDestroy", ReturnType = "void", AccessModifier = "public" });
     }
+    #endregion
 
+    #region Script Generation
     private void CreateScript(string name, string path, List<IVariable> variables, List<IMethod> methods, List<IMethod> unityMethods)
     {
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(path))
@@ -325,4 +345,5 @@ public class ScriptCreatorWindow : EditorWindow
         IScriptGenerator generator = new ScriptGenerator();
         generator.GenerateScript(name, path, variables, methods, unityMethods);
     }
+    #endregion
 }
